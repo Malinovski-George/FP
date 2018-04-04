@@ -1,0 +1,10 @@
+.form-group.required .control-label:after {
+    color: #d00;
+    content: "*";
+    position: static;
+    margin-left: 5px;
+    top: 7px;
+    font-family: 'Glyphicons Halflings';
+    font-weight: normal;
+    font-size: 12px;
+}

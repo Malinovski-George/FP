@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+
+Hello, <span th:text="${MailDto.userName}"></span>!
+<br>
+Ticket <a th:href="@{http://localhost:8889/ticket/{id}/overview(id=${MailDto.id})}"><i th:text="${MailDto.id}"/></a> <span th:text="${MailDto.bodyText}"></span>
+
+</body>
+</html>

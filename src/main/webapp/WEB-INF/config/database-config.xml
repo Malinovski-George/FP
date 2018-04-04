@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:context="http://www.springframework.org/schema/context"
+
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/tx
+    http://www.springframework.org/schema/tx/spring-tx.xsd
+    http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:component-scan base-package="com.malinovski.helpdesk.*"/>
+    <context:property-placeholder location="classpath:application.properties"/>
+
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <bean id="dmDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${jdbc.driverClass}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dmDataSource"/>
+
+        <property name="annotatedClasses">
+            <list>
+                <value>com.malinovski.helpdesk.model.User</value>
+                <value>com.malinovski.helpdesk.model.Address</value>
+                <value>com.malinovski.helpdesk.model.Ticket</value>
+                <value>com.malinovski.helpdesk.model.Category</value>
+                <value>com.malinovski.helpdesk.model.Comment</value>
+                <value>com.malinovski.helpdesk.model.History</value>
+                <value>com.malinovski.helpdesk.model.Feedback</value>
+                <value>com.malinovski.helpdesk.model.Attachment</value>
+            </list>
+        </property>
+
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.show_sql">false</prop>
+                <prop key="conn">false</prop>
+                <prop key="hibernate.hbm2ddl.auto">create</prop>
+                <prop key="use">create</prop>
+                <prop key="hibernate.hbm2ddl.import_files">sql/import_data.sql</prop>
+                <prop key="hibernate.use_sql_comments">false</prop>
+                <prop key="hibernate.format_sql">true</prop>
+                <prop key="hibernate.default-lazy">false</prop>
+                <prop key="hibernate.enable_lazy_load_no_trans">true</prop>
+                <prop key="hibernate.connection.">true</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"></property>
+    </bean>
+
+</beans>

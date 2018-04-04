@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+    <meta http-equiv="Content-Type" content="bodyText/html; charset=UTF-8" />
+</head>
+<body>
+Subject: <span th:bodyText="${MailDto.subjectMessage}"></span>
+Body: Hello, <span th:bodyText="${MailDto.userName}"></span>!
+
+<!--Ticket <a th:href="@{'/ticket/' + ${MailDto.id} + '/overview'}">{{id}}</a> <span th:bodyText="${MailDto.bodyText}"></span>.-->
+
+</body>
+</html>

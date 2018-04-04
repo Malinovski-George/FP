@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+<head>
+
+    <title>help desk</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <link href="/resources/css/footer.css" rel="stylesheet">
+    <link href="/resources/css/required.css" rel="stylesheet">
+    <link href="/resources/css/clear-table-style.css" rel="stylesheet">
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+</head>
+
+<body ng-app="helpDesk">
+
+<div class="page-header container">
+    <div class="row">
+        <h1> HELP DESK
+            <small>ticket edit</small>
+        </h1>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-11"></div>
+        <div class="col-sm-1"><a th:href="@{/logout}">Logout</a></div>
+    </div>
+</div>
+
+<div class="container" ng-controller="TicketEditController as ctrl">
+    <div class="row" ng-controller="FormExtenderController as ctrlForm">
+
+        <div class="col-md-2">
+            <button type="button" class="btn btn-success" ng-click="ctrl.overview()">Ticket Overview</button>
+
+        </div>
+        <div class="col-md-8">
+
+            <h3>
+                <small>Edit Ticket</small>
+            </h3>
+            <br>
+
+            <form name="createTicketForm" ng-submit="ctrl.submit()" enctype="multipart/form-data" ng-cloak>
+
+<!--ID-->
+                <input type="hidden" ng-model="ctrl.ticketDto.id"/>
+
+ <!--select category-->
+                <div class="form-group required row">
+
+                    <label class="col-sm-2 control-label" for="categorySelect">Category</label>
+                    <div class="col-sm-5">
+                        <select class="form-control " id="categorySelect" name="categorySelect"
+                                ng-model="ctrl.ticketDto.categoryId"
+                                oninvalid="this.setCustomValidity('Please, choose the category')"
+                                oninput="setCustomValidity('')"
+                                required to-number>
+                            <option value="">---Please select category---</option>
+                            <option ng-repeat="category in ctrlForm.formExtender.category" value="{{$index + 1}}">
+                                {{category}}
+                            </option>
+                        </select>
+                    </div>
+                    <div></div>
+                </div>
+
+<!--input Name-->
+                <div class="form-group required row">
+                    <label for="inputName" class="col-sm-2 control-label">Name</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control" id="inputName"
+                               ng-model="ctrl.ticketDto.name" name="inputName"
+                               maxlength="100" ng-pattern="ctrl.regExpText"
+                               oninvalid="this.setCustomValidity('Please, write the name of ticket')"
+                               oninput="setCustomValidity('')"
+                               required>
+                    </div>
+                    <span style="color:red" ng-show="createTicketForm.inputName.$touched &&
+                    createTicketForm.inputName.$invalid"> Name is invalid</span>
+                </div>
+
+<!--textarea Description-->
+                <div class="form-group row">
+                    <label class="col-sm-2" for="inputDescription">Description</label>
+                    <div class="col-sm-7">
+                        <textarea class="form-control" rows="5" id="inputDescription"
+                                  ng-model="ctrl.ticketDto.description" name="inputDescription"
+                                  maxlength="500" ng-pattern="ctrl.regExpText"></textarea>
+                    </div>
+                    <span style="color:red" ng-show="
+                        createTicketForm.inputDescription.$touched &&
+                    createTicketForm.inputDescription.$invalid">Description is invalid</span>
+                </div>
+                <div class="form-group required row">
+                    <label class="col-sm-2 control-label" for="inlineFormUrgencySelect">Urgency</label>
+                    <div class="col-sm-5">
+
+<!--select Urgency-->
+                        <select class="form-control " id="inlineFormUrgencySelect"
+                                name="urgency" ng-model="ctrl.ticketDto.urgencyId"
+                                oninvalid="this.setCustomValidity('Please, choose the urgency.')"
+                                oninput="setCustomValidity('')"
+                                required to-number>
+                            <option value="">---Please select urgency---</option>
+                            <option ng-repeat="(key,value) in ctrlForm.formExtender.urgency" value="{{$index}}">
+                                {{value}}
+                            </option>
+                        </select>
+                    </div>
+
+                </div>
+
+<!--input Date-->
+                <div class="form-group row">
+                    <label for="inputResolutionDate" class="col-sm-2 col-form-label">Desired resolution date</label>
+
+                    <div class="col-sm-5">
+                        <input type="date" class="form-control" id="inputResolutionDate"
+                               min="{{date | date:'yyyy-MM-dd'}}"
+                               name="inputResolutionDate" ng-model="ctrl.ticketDto.resolutionDate"
+                        >
+                    </div>
+                    <span style="color:red" ng-show="createTicketForm.inputResolutionDate.$error.date">
+                Not a valid date</span>
+                </div>
+                <div class="form-group row">
+                    <label  class="col-md-2 col-form-label">Add attachments</label>
+                    <div class="col-md-10 ">
+                        <input type="file" accept=".pdf,.png,.doc,.docx,.jpg,.jpeg"
+                               file-upload multiple> <span style="color:#999">*.pdf, *.png, *.doc, *.docx, *.jpg, *.jpeg</span>
+                        <br>
+                        <table >
+                            <thead>
+                            <tr></tr>
+                            </thead>
+                            <tbody ng-repeat="file in ctrl.attachments" >
+                            <tr class="clear-all">
+                                <td  ng-bind="file.fileName" class="clear-all"> </td>
+                                <td  class="clear-all">
+                                    <button ng-hide="file.isDeleted" type="button" ng-click="ctrl.delete(file, file.id)" class="btn btn-default btn-xs">delete</button>
+                                    <span ng-show="file.isDeleted" style="color: #dd0000">Is deleted</span>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+<!--textarea Comment-->
+                <div class="form-group row">
+                    <label class="col-sm-2" for="comment">Comment</label>
+                    <div class="col-sm-7">
+                        <textarea class="form-control" rows="5" id="comment"
+                                  ng-model="ctrl.ticketDto.comment" name="comment"
+                                  maxlength="500" ng-pattern="ctrl.regExpText"></textarea>
+                    </div>
+                    <span style="color:red" ng-show="
+                        createTicketForm.inputComment.$touched &&
+                    createTicketForm.inputComment.$invalid">Comment is invalid</span>
+                </div>
+                <div>
+                    <input type="hidden" value="ctrl.date" name="created_on_date"
+                           ng-model="ctrl.ticketDto.created_on_date">
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-9">
+                    </div>
+                    <div class="col-sm-2" >
+                        <input type="submit" value="Save as Draft" class="btn btn-default btn-sm" o\>
+                    </div>
+                    <div class="col-sm-1">
+                        <input type="submit" ng-click="ctrl.isNew = true" value="Submit" class="btn btn-primary btn-sm"
+                               \>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!--.col-md-8-->
+    <div class="col-md-2"></div>
+
+    <footer class="footer navbar">
+        <div class="container">
+            <p class="navbar-text pull-left">© 2017 - Site Built By George Malinovski.</p>
+        </div>
+    </footer>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
+<script th:src="@{/resources/js/app.js}" defer></script>
+<script th:src="@{/resources/js/directives/file-upload-directive.js}" defer></script>
+<script th:src="@{/resources/js/directives/number-directive.js}" defer></script>
+
+<script th:src="@{/resources/js/service/form-extender-service.js}" defer></script>
+<script th:src="@{/resources/js/controller/form-extender-controller.js}" defer></script>
+
+<script th:src="@{/resources/js/service/ticket-edit-service.js}" defer></script>
+<script th:src="@{/resources/js/controller/ticket-edit-controller.js}" defer></script>
+</body>
+</html>

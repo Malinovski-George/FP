@@ -1,0 +1,174 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<!DOCTYPE html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>help desk</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link href="/resources/css/footer.css" rel="stylesheet">
+    <script src="https://use.fontawesome.com/e091f80212.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+
+<body ng-app="helpDesk">
+
+<div class="container" ng-controller="HomeController as ctrl">
+
+
+    <div class="page-header ">
+        <div class="row">
+            <h1> HELP DESK
+                <small>tickets</small>
+            </h1>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-11"></div>
+            <div class="col-sm-1"><a th:href="@{/logout}">Logout</a></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-9"></div>
+        <div class="col-sm-3">
+                 <div th:if="${#request.isUserInRole('ROLE_EMPLOYEE') or #request.isUserInRole('ROLE_MANAGER')}">
+                <button class="btn  btn-success" onclick="location.href = '/tickets'">Create New Ticket</button>
+            </div>
+        </div>
+
+    </div>
+
+    <br>
+
+       <div class="row block">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-4">
+            <div>
+                <button class="btn btn-block btn-primary" ng-click="ctrl.getAllTickets()">All Tickets</button>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div>
+                <button class="btn btn-block btn-primary" ng-click="ctrl.getMyTickets()">My Tickets</button>
+            </div>
+        </div>
+        <div class="col-sm-2"></div>
+    </div>
+    <br>
+
+
+    <div class="row">
+        <div>
+
+            <div class="col-md-2">
+                <input class="form-control" id="SearchInput" type="text" placeholder="Search..">
+            </div>
+
+                   <br>
+            <br>
+
+            <table  class="table table-bordered table-striped">
+                <thead >
+                <tr>
+                    <th>
+                        <a href="#" ng-click="orderByField='id'; reverseSort = !reverseSort">
+                            ID
+                            <span ng-show="orderByField == 'id'">
+                                <span ng-show="!reverseSort" class="fa fa-caret-up"></span>
+                                <span ng-show="reverseSort" class="fa fa-caret-down"></span>
+                            </span>
+                        </a>
+                    </th>
+                    <th>
+                        <a href="#" ng-click="orderByField='name'; reverseSort = !reverseSort">
+                            Name
+                            <span ng-show="orderByField == 'name'">
+                                <span ng-show="!reverseSort" class="fa fa-caret-up"></span>
+                                <span ng-show="reverseSort" class="fa fa-caret-down"></span>
+                            </span>
+                        </a>
+                    </th>
+                    <th>
+                        <a href="#" ng-click="orderByField='desiredResolutionDateString'; reverseSort = !reverseSort">
+                            Desired Date
+                            <span ng-show="orderByField == 'desiredResolutionDateString'">
+                                <span  ng-show="!reverseSort" class="fa fa-caret-up"></span>
+                                <span ng-show="reverseSort" class="fa fa-caret-down"></span>
+                            </span>
+                        </a>
+                    </th>
+                    <th>
+                        <a href="#" ng-click="orderByField='urgency'; reverseSort = !reverseSort">
+                            Urgency
+                            <span ng-show="orderByField == 'urgency'">
+                                <span ng-show="!reverseSort" class="fa fa-caret-up"></span>
+                                <span ng-show="reverseSort" class="fa fa-caret-down"></span>
+                            </span>
+                        </a>
+                    </th>
+                    <th>
+                        <a href="#" ng-click="orderByField='state'; reverseSort = !reverseSort">
+                            Status
+                            <span ng-show="orderByField == 'state'">
+                                <span ng-show="!reverseSort" class="fa fa-caret-up"></span>
+                                <span ng-show="reverseSort" class="fa fa-caret-down"></span>
+                            </span>
+                        </a>
+                    </th>
+
+                </tr>
+                </thead>
+                <tbody id="TicketTable" ng-repeat="ticket in ctrl.tickets|orderBy:orderByField:reverseSort" >
+                <tr>
+                    <td><span ng-bind="ticket.id"></span></td>
+                    <td>
+                        <a type="button" class="btn btn-link" ng-click="ctrl.overview(ticket.id)">
+                            <span ng-bind="ticket.name"></span>
+                        </a>
+                    </td>
+                    <td><span ng-bind="ticket.desiredResolutionDateString"></span></td>
+                    <td><span ng-bind="ticket.urgencyName"></span></td>
+                    <td><span ng-bind="ticket.stateName"></span></td>
+
+                    <td>
+                        <div class="btn-group" ng-show="ticket.actions.length > 0">
+                            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"> Actions
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" role="menu">
+                                <li ng-repeat='action in ticket.actions' ng-click="ctrl.transfer(ticket.id, action)"><a href="">{{action}}</a></li>
+                            </ul>
+                        </div>
+                    </td>
+
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+    <footer class="footer navbar">
+        <div class="container">
+            <p class="navbar-text pull-left">© 2017 - Site Built By George Malinovski.</p>
+        </div>
+    </footer>
+
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
+<script th:src="@{/resources/js/app.js}"></script>
+<script th:src="@{/resources/js/service/home-service.js}"></script>
+<script th:src="@{/resources/js/controller/home-controller.js}"></script>
+<script th:src="@{/resources/js/controller/table-controller.js}"></script>
+
+</body>
+</html>

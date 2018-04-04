@@ -1,0 +1,94 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<!DOCTYPE html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>help desk</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="/resources/css/stars.css">
+    <link href="/resources/css/footer.css" rel="stylesheet">
+
+</head>
+
+<body ng-app="helpDesk" ng-controller="FeedbackController as ctrl" ng-cloak>
+
+<div class="container">
+    <div class="page-header">
+        <h1> HELP DESK
+            <small>feedback</small>
+        </h1>
+    </div>
+    <form name="commentForm" ng-submit="ctrl.submit()">
+        <div class="row">
+
+            <input class="star star-5" name="rateForm" id="star-5" type="radio" ng-value="5"
+                   ng-model="ctrl.feedbackDto.rate" required/>
+            <label class="star star-5" for="star-5"></label>
+            <input class="star star-4" name="rateForm" id="star-4" type="radio" ng-value="4"
+                   ng-model="ctrl.feedbackDto.rate"/>
+            <label class="star star-4" for="star-4"></label>
+            <input class="star star-3" name="rateForm" id="star-3" type="radio" ng-value="3"
+                   ng-model="ctrl.feedbackDto.rate"/>
+            <label class="star star-3" for="star-3"></label>
+            <input class="star star-2" name="rateForm" id="star-2" type="radio" ng-value="2"
+                   ng-model="ctrl.feedbackDto.rate"/>
+            <label class="star star-2" for="star-2"></label>
+            <input class="star star-1" name="rateForm" id="star-1" type="radio" ng-value="1"
+                   ng-model="ctrl.feedbackDto.rate"/>
+            <label class="star star-1" for="star-1"></label>
+
+        </div>
+
+        <br>
+        <br>
+
+        <div class="row">
+
+            <div class="form-group row">
+
+                <label class="col-sm-2" for="inputComment">Comment</label>
+                <div class="col-sm-7">
+                        <textarea class="form-control" rows="5" id="inputComment"
+                                  ng-model="ctrl.feedbackDto.text" name="inputComment"
+                                  maxlength="500" ng-pattern="ctrl.regExpText"></textarea>
+                </div>
+
+                <span style="color:red"
+                      ng-show="commentForm.inputComment.$touched && commentForm.inputComment.$invalid">Comment is invalid
+                </span>
+            </div>
+
+            <input type="submit" value="Leave feedback" class="btn btn-primary"
+                   ng-disabled="commentForm.$invalid ">
+            <button type="button" class="btn btn-success " onclick="location.href = '/home'">Ticket List</button>
+        </div>
+    </form>
+
+
+</div>
+
+<footer class="footer navbar">
+    <div class="container">
+        <p class="navbar-text pull-left">© 2017 - Site Built By George Malinovski.</p>
+    </div>
+</footer>
+
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
+<script th:src="@{/resources/js/app.js}"></script>
+<script th:src="@{/resources/js/service/feedback-service.js}"></script>
+<script th:src="@{/resources/js/controller/feedback-controller.js}"></script>
+
+</body>
+</html>

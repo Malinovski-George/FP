@@ -1,0 +1,314 @@
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<!DOCTYPE html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>help desk</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <script src="https://use.fontawesome.com/e091f80212.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="/resources/css/stars.css">
+    <link href="/resources/css/table.css" rel="stylesheet">
+    <link href="/resources/css/footer.css" rel="stylesheet">
+    <link href="/resources/css/clear-table-style.css" rel="stylesheet">
+    <style>
+        label.star {
+            padding: 5px;
+            font-size: 16px;
+        }
+
+        input.star-5:checked ~ label.star:before {
+            text-shadow: 0 0 8px #952;
+        }
+    </style>
+
+</head>
+
+<body ng-app="helpDesk">
+
+<div class="container" ng-controller="TicketOverviewController as ctrl">
+
+    <!--HEADER-->
+    <div class="page-header ">
+        <div class="row">
+            <h1> HELP DESK
+                <small>ticket overview</small>
+            </h1>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-11"></div>
+            <div class="col-sm-1"><a th:href="@{/logout}">Logout</a></div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-sm-2">
+            <button style="width:60%" class="btn  btn-success center-block" onclick="location.href = '/home'">
+                Ticket List
+            </button>
+        </div>
+        <div class="col-sm-8">
+
+            <h2>About ticket</h2>
+            <br>
+
+            <table>
+                <thead>
+                <tr>
+                    <th th:text="${ticketDto.name}" colspan="2"></th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr>
+                    <td>Category:</td>
+                    <td th:text="${ticketDto.categoryName}"></td>
+                </tr>
+                <tr>
+                    <td>Created on:</td>
+
+                    <td th:text="${#dates.format(ticketDto.createdOn, 'dd/MM/yyyy')}"></td>
+                </tr>
+                <tr>
+                    <td>Status:</td>
+                    <td th:text="${ticketDto.stateName}"></td>
+                </tr>
+                <tr>
+                    <td>Urgency:</td>
+                    <td th:text="${ticketDto.urgencyName}"></td>
+                </tr>
+                <tr>
+                    <td>Desired resolution date:</td>
+                    <td th:text="${#dates.format(ticketDto.desiredResolutionDate, 'dd/MM/yyyy')}"></td>
+                </tr>
+                <tr>
+                    <td>Owner:</td>
+                    <td><span th:text="${ticketDto.ownerName}"></span>
+                </tr>
+
+                <span th:if="${ticketDto.approverName != null}">
+                 <tr>
+                    <td>Approver:</td>
+                    <td><span th:text="${ticketDto.approverName}"></span>
+                 </tr>
+                </span>
+                <span th:if="${ticketDto.assigneeName != null}">
+                 <tr>
+                    <td>Assegnie:</td>
+                    <td><span th:text="${ticketDto.assigneeName}"></span>
+                 </tr>
+                 </span>
+
+                <span th:if="${ticketDto.description != null}">
+                 <tr>
+                    <td>Description:</td>
+                    <td><span th:text="${ticketDto.description}"></span></td>
+                 </tr>
+                 </span>
+
+                <span th:if="${attachmentDto.size() > 0}">
+                 <tr>
+                    <td>Attachments:</td>
+                    <td>
+                        <table class="clear-all">
+                            <tr th:each="att : ${attachmentDto}" class="clear-all">
+                                <td class="clear-all">
+                                    <a th:href="@{http://localhost:8889/tickets/{id}/files/{fileId}(id=${ticketDto.id}, fileId=${att.id})}" class="clear-all">
+                                        <i th:text="${att.fileName}"/>
+                                    </a>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                 </tr>
+                 </span>
+
+
+                <span th:if="${ticketDto.feedbackDto != null}">
+                 <tr>
+                    <td>Feedback:</td>
+                    <td>
+                        <form name="rateForm" th:object="${ticketDto.feedbackDto}">
+                            <input class="star star-5" id="star-5" type="radio" value="5" th:field="*{rate}" disabled
+                                   required/>
+                            <label class="star star-5" for="star-5"></label>
+                            <input class="star star-4" id="star-4" type="radio" value="4" th:field="*{rate}" disabled/>
+                            <label class="star star-4" for="star-4"></label>
+                            <input class="star star-3" id="star-3" type="radio" value="3" th:field="*{rate}" disabled/>
+                            <label class="star star-3" for="star-3"></label>
+                            <input class="star star-2" id="star-2" type="radio" value="2" th:field="*{rate}" disabled/>
+                            <label class="star star-2" for="star-2"></label>
+                            <input class="star star-1" id="star-1" type="radio" value="1" th:field="*{rate}" disabled/>
+                            <label class="star star-1" for="star-1"></label>
+                        </form>
+                        <span th:text="${ticketDto.feedbackDto.text}"></span>
+                        <br>
+                        <span th:text="${#dates.format(ticketDto.feedbackDto.date, 'dd/MM/yyyy')}"></span>
+                    </td>
+                 </tr>
+                 </span>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="col-sm-2">
+
+            <div th:if="${isEditable}">
+
+
+                <button style="width:60%" class="btn  btn-success center-block" ng-click="edit(id)">
+                    Edit
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <br>
+
+    <!--ALL TICKETS / MY TICKET-->
+    <div class="row block">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-4">
+            <div>
+                <button class="btn btn-block btn-primary"
+                        ng-click="ctrl.getStories()">History
+                </button>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div>
+                <button class="btn btn-block btn-primary"
+                        ng-click="ctrl.getComments()">Comments
+                </button>
+            </div>
+        </div>
+        <div class="col-sm-2"></div>
+    </div>
+    <br>
+
+    <!--history/comment table-->
+    <div class="row" ng-cloak>
+        <div id="historyTable">
+
+
+            <!--HISTORY-->
+
+            <table>
+                <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>User</th>
+                    <th>Action</th>
+                    <th>Description</th>
+                </tr>
+                </thead>
+                <tbody ng-repeat="history in ctrl.stories" class="clear-font-size">
+                <tr>
+                    <td ng-bind="history.stringDate"></td>
+                    <td ng-bind="history.userName"></td>
+                    <td ng-bind="history.action"></td>
+                    <td ng-bind="history.description"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="commentsTable" style="display: none">
+
+            <!--COMMENTS-->
+            <table>
+                <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>User</th>
+                    <th>Comment</th>
+                </tr>
+                </thead>
+                <tbody ng-repeat="comment in ctrl.comments|orderBy:'-stringDate'" class="clear-font-size">
+                <tr>
+                    <td ng-bind="comment.stringDate"></td>
+                    <td ng-bind="comment.userName"></td>
+                    <td ng-bind="comment.text"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="row">
+
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8"></div>
+            <div class="col-sm-2">
+                <div>
+                    <button class="btn btn-block btn-primary"
+                            ng-click="ctrl.showWholeTable()"
+                            ng-hide="ctrl.isWholeTableShown || ctrl.isButtonShowHiden">show all
+                    </button>
+
+                    <button class="btn btn-block btn-primary"
+                            ng-click="ctrl.showTopTable()"
+                            ng-show="ctrl.isWholeTableShown">hide
+                    </button>
+                </div>
+            </div>
+            <div class="col-sm-2"></div>
+
+        </div>
+
+        <div id="comments" style="display: none">
+            <form name="commentForm" ng-submit="ctrl.submit()">
+
+
+                <div class="form-group row">
+                    <label class="col-sm-2" for="inputComment">Comment</label>
+
+                    <div class="col-sm-7">
+                        <textarea class="form-control" rows="5" id="inputComment"
+                                  ng-model="ctrl.commentDto.text" name="inputComment"
+                                  maxlength="500" ng-pattern="ctrl.regExpText" required></textarea>
+                    </div>
+                    <div class="has-error" ng-show="commentForm.$dirty">
+                    <span style="color:red" ng-show="commentForm.inputComment.$touched &&
+                    commentForm.inputComment.$invalid">Comment is invalid</span>
+
+                    </div>
+                </div>
+
+                <input type="submit" value="Submit" class="btn btn-primary btn-sm" ng-disabled="commentForm.$invalid" \>
+            </form>
+        </div>
+
+
+    </div>
+
+
+    <link href="/resources/css/footer.css" rel="stylesheet">
+
+    <footer class="footer navbar">
+        <div class="container">
+            <p class="navbar-text pull-left">© 2017 - Site Built By George Malinovski.</p>
+        </div>
+    </footer>
+
+</div>
+
+<!-- /container -->
+
+<!--search in table-->
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.js"></script>
+<script th:src="@{/resources/js/app.js}"></script>
+<script th:src="@{/resources/js/service/ticket-overview-service.js}"></script>
+<script th:src="@{/resources/js/controller/ticket-overview-controller.js}"></script>
+
+</body>
+</html>
